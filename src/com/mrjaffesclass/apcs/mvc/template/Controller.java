@@ -37,7 +37,7 @@ public class Controller implements MessageHandler {
     mvcMessaging = new Messenger();
 
     // Create the view and set it visible
-    View view = new View(mvcMessaging);    // This creates our view
+    View1 view = new View1(mvcMessaging);    // This creates our view
     view.init();
     view.setVisible(true);
 
