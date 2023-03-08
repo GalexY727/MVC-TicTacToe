@@ -1,4 +1,6 @@
 package com.mrjaffesclass.apcs.mvc.template;
+import com.mrjaffesclass.apcs.messenger.*;
+
 /**
  * MVC Template
  * This is a template of an MVC framework used by APCS for the 

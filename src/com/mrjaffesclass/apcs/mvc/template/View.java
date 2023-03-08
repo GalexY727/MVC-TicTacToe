@@ -69,7 +69,6 @@ public class View extends JFrame implements MessageHandler {
     public void init() {
         this.mvcMessaging.subscribe("boardChange", this);
         this.mvcMessaging.subscribe("gameOver", this);
-
     }
 
     @Override
@@ -80,11 +79,22 @@ public class View extends JFrame implements MessageHandler {
             System.out.println("MSG: received by view: "+messageName+" | No data sent");
         }
         if (messageName.equals("boardChange")) {
-            updateBoard(messagePayload);
-        } else if (messageName.equals("gameOver")) {
-            closeIfWinner();
+            // Get the message payload and cast it as a 2D string array since we
+            // know that the model is sending out the board data with the message
+            String[][] board = (String[][])messagePayload;
+            // Now set the button text with the contents of the board
+            leftTop.setText(board[0][0]);
+            topMid.setText(board[0][1]);
+            rightTop.setText(board[0][2]);
+            leftMid.setText(board[1][0]);
+            midMid.setText(board[1][1]);
+            rightMid.setText(board[1][2]);
+            leftBottom.setText(board[2][0]);
+            bottomMid.setText(board[2][1]);
+            rightBottom.setText(board[2][2]);
         }
     }
+
 
     public void closeIfWinner() {
         if (!isWinner() && isFull()) {
@@ -119,6 +129,7 @@ public class View extends JFrame implements MessageHandler {
                 turn = "X";
             }
         }
+        this.mvcMessaging.notify("playerMove", button.getName());
     }
 
     public boolean isWinner(){
