@@ -61,7 +61,7 @@ public class Model implements MessageHandler {
     // playerMove message handler
     if (messageName.equals("playerMove")) {
       // Get the position string and convert to row and col
-      String position = (String)messagePayload;
+      String position = (String) messagePayload;
       int row = Integer.parseInt(position.substring(0, 1));
       int col = Integer.parseInt(position.substring(1, 2));
       // If square is blank...
@@ -72,8 +72,15 @@ public class Model implements MessageHandler {
         } else {
           this.board[row][col] = "O";
         }
+        this.whoseMove = !this.whoseMove;
         // Send the boardChange message along with the new board
-        this.mvcMessaging.notify("boardChange", this.board);
+        if (!this.gameOver) {
+          this.mvcMessaging.notify("boardChange", this.board);
+        }
+        this.gameOver = (isFull() || isWinner());
+        if (this.gameOver) {
+          this.mvcMessaging.notify("newGame", this.board);
+        }
       }
 
       // newGame message handler
@@ -85,5 +92,33 @@ public class Model implements MessageHandler {
     }
   }
 
+  public boolean isFull() {
+    for (String[] strings : this.board) {
+      for (String string : strings) {
+        if (string.equals("")) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 
+  public boolean isWinner() {
+    // Check for a winner using two for loops
+    for (String[] strings : this.board) {
+      for (int col = 0; col < this.board[0].length; col++) {
+        // Check for a winner in the row
+        if (strings[0].equals(strings[1]) && strings[1].equals(strings[2]) && !strings[0].equals("")) {
+          return true;
+        }
+        // Check for a winner in the column
+        if (this.board[0][col].equals(this.board[1][col]) && this.board[1][col].equals(this.board[2][col]) && !this.board[0][col].equals("")) {
+          return true;
+        }
+      }
+    }
+    // Check for winner in a diagonals
+    return this.board[0][0].equals(this.board[1][1]) && this.board[1][1].equals(this.board[2][2]) && !this.board[0][0].equals("") ||
+        this.board[0][2].equals(this.board[1][1]) && this.board[1][1].equals(this.board[2][0]) && !this.board[0][2].equals("");
+  }
 }

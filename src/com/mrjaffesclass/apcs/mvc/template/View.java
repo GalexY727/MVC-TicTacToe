@@ -31,7 +31,15 @@ public class View extends JFrame implements MessageHandler {
         setSize(300, 300);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
-
+        leftTop.setName("00");
+        leftMid.setName("10");
+        leftBottom.setName("20");
+        topMid.setName("01");
+        midMid.setName("11");
+        bottomMid.setName("21");
+        rightTop.setName("02");
+        rightMid.setName("12");
+        rightBottom.setName("22");
         topMid.addActionListener(e -> {
             setTile(topMid);
         });
@@ -81,7 +89,7 @@ public class View extends JFrame implements MessageHandler {
         if (messageName.equals("boardChange")) {
             // Get the message payload and cast it as a 2D string array since we
             // know that the model is sending out the board data with the message
-            String[][] board = (String[][])messagePayload;
+            String[][] board = (String[][]) messagePayload;
             // Now set the button text with the contents of the board
             leftTop.setText(board[0][0]);
             topMid.setText(board[0][1]);
@@ -94,18 +102,6 @@ public class View extends JFrame implements MessageHandler {
             rightBottom.setText(board[2][2]);
         }
     }
-
-
-    public void closeIfWinner() {
-        if (!isWinner() && isFull()) {
-            JOptionPane.showMessageDialog(null, "Draw");
-            dispose();
-        } else if (isWinner()) {
-            JOptionPane.showMessageDialog(null, "Winner is " + (turn.equals("X") ? "O" : "X"));
-            dispose();
-        }
-    }
-
     public boolean isFull() {
         for (JButton button : new JButton[]{topMid, midMid, bottomMid, rightMid, leftMid, rightTop, rightBottom, leftTop, leftBottom}) {
             if (button.getText().isEmpty()) {
@@ -116,63 +112,7 @@ public class View extends JFrame implements MessageHandler {
     }
 
     public void setTile(JButton button) {
-        if (!button.getText().isEmpty()) {
-            return;
-        }
-        switch (turn) {
-            case "X" -> {
-                button.setText("X");
-                turn = "O";
-            }
-            case "O" -> {
-                button.setText("O");
-                turn = "X";
-            }
-        }
+        System.out.println("Sending playerMove message with payload: " + button.getName());
         this.mvcMessaging.notify("playerMove", button.getName());
-    }
-
-    public boolean isWinner(){
-        if (    topMid.getText().equals(midMid.getText()) &&
-                midMid.getText().equals(bottomMid.getText()) &&
-                !topMid.getText().isEmpty())
-            return true;
-
-        if (    rightTop.getText().equals(rightMid.getText()) &&
-                rightMid.getText().equals(rightBottom.getText()) &&
-                !rightTop.getText().isEmpty())
-            return true;
-
-        if (    leftTop.getText().equals(leftMid.getText()) &&
-                leftMid.getText().equals(leftBottom.getText()) &&
-                !leftTop.getText().isEmpty())
-            return true;
-
-        if (    leftTop.getText().equals(midMid.getText()) &&
-                midMid.getText().equals(rightBottom.getText()) &&
-                !leftTop.getText().isEmpty())
-            return true;
-
-        if (    rightTop.getText().equals(midMid.getText()) &&
-                midMid.getText().equals(leftBottom.getText()) &&
-                !rightTop.getText().isEmpty())
-            return true;
-
-        if (    leftTop.getText().equals(topMid.getText()) &&
-                topMid.getText().equals(rightTop.getText()) &&
-                !leftTop.getText().isEmpty())
-            return true;
-
-        if (    leftMid.getText().equals(midMid.getText()) &&
-                midMid.getText().equals(rightMid.getText()) &&
-                !leftMid.getText().isEmpty())
-            return true;
-
-        if (    leftBottom.getText().equals(bottomMid.getText()) &&
-                bottomMid.getText().equals(rightBottom.getText()) &&
-                !leftBottom.getText().isEmpty())
-            return true;
-
-        return false;
     }
 }
