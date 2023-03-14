@@ -47,6 +47,7 @@ public class Model implements MessageHandler {
     this.newGame();
     this.mvcMessaging.subscribe("playerMove", this);
     this.mvcMessaging.subscribe("newGame", this);
+    this.mvcMessaging.subscribe("whoseMove", this);
   }
 
   @Override
@@ -73,13 +74,14 @@ public class Model implements MessageHandler {
           this.board[row][col] = "O";
         }
         this.whoseMove = !this.whoseMove;
+        this.mvcMessaging.notify("whoseMove", this.whoseMove);
         // Send the boardChange message along with the new board
         if (!this.gameOver) {
           this.mvcMessaging.notify("boardChange", this.board);
         }
         this.gameOver = (isFull() || isWinner());
         if (this.gameOver) {
-          this.mvcMessaging.notify("newGame", this.board);
+          this.mvcMessaging.notify("gameOver", this.board);
         }
       }
 

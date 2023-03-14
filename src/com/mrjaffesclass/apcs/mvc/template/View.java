@@ -18,6 +18,7 @@ public class View extends JFrame implements MessageHandler {
     private JButton rightBottom;
     private JButton leftTop;
     private JButton leftBottom;
+    private JButton newGameButton;
     private JLabel ticTacToeLabel;
 
     public View(Messenger messages) {
@@ -40,6 +41,7 @@ public class View extends JFrame implements MessageHandler {
         rightTop.setName("02");
         rightMid.setName("12");
         rightBottom.setName("22");
+
         topMid.addActionListener(e -> {
             setTile(topMid);
         });
@@ -67,6 +69,9 @@ public class View extends JFrame implements MessageHandler {
         leftBottom.addActionListener(e -> {
             setTile(leftBottom);
         });
+        newGameButton.addActionListener(e -> {
+            mvcMessaging.notify("newGame", null);
+        });
 
     }
 
@@ -77,6 +82,7 @@ public class View extends JFrame implements MessageHandler {
     public void init() {
         this.mvcMessaging.subscribe("boardChange", this);
         this.mvcMessaging.subscribe("gameOver", this);
+        this.mvcMessaging.subscribe("whoseMove", this);
     }
 
     @Override
@@ -100,6 +106,22 @@ public class View extends JFrame implements MessageHandler {
             leftBottom.setText(board[2][0]);
             bottomMid.setText(board[2][1]);
             rightBottom.setText(board[2][2]);
+        }
+        if (messageName.equals("gameOver")) {
+            if (messagePayload.equals("X")) {
+                JOptionPane.showMessageDialog(null, "X wins!");
+            } else if (messagePayload.equals("O")) {
+                JOptionPane.showMessageDialog(null, "O wins!");
+            } else {
+                JOptionPane.showMessageDialog(null, "It's a tie!");
+            }
+        }
+        if (messageName.equals("whoseMove")) {
+            if (messagePayload.equals(true)) {
+                setTitle("X's Turn");
+            } else {
+                setTitle("O's Turn");
+            }
         }
     }
     public boolean isFull() {
